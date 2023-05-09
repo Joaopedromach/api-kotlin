@@ -2,9 +2,12 @@ package com.example.demo.controller
 
 import com.example.demo.entities.Contact
 import com.example.demo.repositories.ContactRepository
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -22,6 +25,16 @@ class ContactController {
     fun create(@RequestBody contact: Contact): Contact{
         return repository.save(contact)
 
+    }
+    @PutMapping("/{id}")
+    fun update(@PathVariable("id") id:Long,@RequestBody newContact: Contact):Contact{
+        val contact = repository.findById(id).orElseThrow { EntityNotFoundException()}
+
+        contact.apply {
+            this.name = newContact.name
+            this.email = newContact.email
+        }
+        return repository.save(contact)
     }
 
 }
